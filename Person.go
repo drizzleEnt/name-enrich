@@ -1,6 +1,7 @@
 package nameenrich
 
 type Person struct {
+	Id         int
 	Surname    string `json:"surname" binding:"required"`
 	Name       string `json:"name" binding:"required"`
 	Patronymic string `json:"patronymic"`

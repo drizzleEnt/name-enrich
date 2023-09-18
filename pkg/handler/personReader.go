@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	nameenrich "name-enrich"
 	"net/http"
 
@@ -28,7 +27,7 @@ func (h *Handler) checkPerson(c *gin.Context) {
 }
 
 func (h *Handler) EnrichInformation(c *gin.Context, p *nameenrich.Person) {
-	resp, err := h.service.Enrich.EnrichAge(p)
+	err := h.service.Enrich.EnrichAge(p)
 
 	if err != nil {
 		logrus.Error("faild to connect api " + err.Error())
@@ -36,28 +35,14 @@ func (h *Handler) EnrichInformation(c *gin.Context, p *nameenrich.Person) {
 		return
 	}
 
-	err = h.decodeResponse(resp, p)
+	err = h.service.EnrichGender(p)
 
 	if err != nil {
 		errorResponse(c, http.StatusBadGateway, err.Error())
 		return
 	}
 
-	resp, err = h.service.EnrichGender(p)
-
-	if err != nil {
-		errorResponse(c, http.StatusBadGateway, err.Error())
-		return
-	}
-
-	err = h.decodeResponse(resp, p)
-
-	if err != nil {
-		errorResponse(c, http.StatusBadGateway, err.Error())
-		return
-	}
-
-	_, err = h.service.EnrichNationality(p)
+	err = h.service.EnrichNationality(p)
 
 	if err != nil {
 		errorResponse(c, http.StatusBadGateway, err.Error())
@@ -68,8 +53,4 @@ func (h *Handler) EnrichInformation(c *gin.Context, p *nameenrich.Person) {
 		"person": p,
 	})
 
-}
-
-func (h *Handler) decodeResponse(resp *http.Response, p *nameenrich.Person) error {
-	return json.NewDecoder(resp.Body).Decode(p)
 }

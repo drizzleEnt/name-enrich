@@ -21,39 +21,52 @@ func NewEnrichSevice(repo repository.Repository) *EnrichService {
 	}
 }
 
-func (e *EnrichService) EnrichAge(p *nameenrich.Person) (*http.Response, error) {
+func (e *EnrichService) EnrichAge(p *nameenrich.Person) error {
 
 	urlAge := fmt.Sprintf("%s%s", os.Getenv("URL_AGE"), p.Name)
 
 	resp, err := http.Get(urlAge)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return resp, nil
+
+	err = e.decodeResponse(resp, p)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (e *EnrichService) EnrichGender(p *nameenrich.Person) (*http.Response, error) {
+func (e *EnrichService) EnrichGender(p *nameenrich.Person) error {
 
 	urlGender := fmt.Sprintf("%s%s", os.Getenv("URL_GENDER"), p.Name)
 
 	resp, err := http.Get(urlGender)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resp, nil
+	err = e.decodeResponse(resp, p)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (e *EnrichService) EnrichNationality(p *nameenrich.Person) (*http.Response, error) {
+func (e *EnrichService) EnrichNationality(p *nameenrich.Person) error {
 
 	urlNationality := fmt.Sprintf("%s%s", os.Getenv("URL_NATIONALITY"), p.Name)
 
 	resp, err := http.Get(urlNationality)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var c nameenrich.Country
@@ -62,9 +75,13 @@ func (e *EnrichService) EnrichNationality(p *nameenrich.Person) (*http.Response,
 
 	if err != nil {
 		logrus.Error(err.Error())
-		return nil, err
+		return err
 	}
 
 	p.Country = c.Country[0].CountryId
-	return nil, nil
+	return nil
+}
+
+func (e *EnrichService) decodeResponse(resp *http.Response, p *nameenrich.Person) error {
+	return json.NewDecoder(resp.Body).Decode(p)
 }
