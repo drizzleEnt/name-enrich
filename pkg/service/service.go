@@ -11,18 +11,24 @@ type Enrich interface {
 	EnrichNationality(p *nameenrich.Person) error
 }
 
-type Authsevice interface {
+type InsertService interface {
 	CreatePerson(p nameenrich.Person) (int, error)
+}
+
+type ReceiptService interface {
+	ReceiptPerson(id int) (nameenrich.Person, error)
 }
 
 type Service struct {
 	Enrich
-	Authsevice
+	InsertService
+	ReceiptService
 }
 
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		Enrich:     NewEnrichSevice(*repository),
-		Authsevice: NewAuthSevice(repository.Autorization),
+		Enrich:         NewEnrichSevice(*repository),
+		InsertService:  NewInsertSevice(repository.Insertion),
+		ReceiptService: NewReciptService(repository.Receiption),
 	}
 }

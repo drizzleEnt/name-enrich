@@ -78,7 +78,7 @@ func (e *EnrichService) EnrichNationality(p *nameenrich.Person) error {
 		return err
 	}
 
-	p.Country = c.Country[0].CountryId
+	p.Nationality = c.Country[0].CountryId
 	return nil
 }
 

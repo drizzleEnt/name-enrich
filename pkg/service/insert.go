@@ -5,16 +5,16 @@ import (
 	"name-enrich/pkg/repository"
 )
 
-type AuthService struct {
-	repo repository.Autorization
+type InsertSrv struct {
+	repo repository.Insertion
 }
 
-func NewAuthSevice(repo repository.Autorization) *AuthService {
-	return &AuthService{
+func NewInsertSevice(repo repository.Insertion) *InsertSrv {
+	return &InsertSrv{
 		repo: repo,
 	}
 }
 
-func (s *AuthService) CreatePerson(p nameenrich.Person) (int, error) {
+func (s *InsertSrv) CreatePerson(p nameenrich.Person) (int, error) {
 	return s.repo.CreatePerson(p)
 }

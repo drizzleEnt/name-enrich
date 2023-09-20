@@ -6,16 +6,22 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Autorization interface {
+type Insertion interface {
 	CreatePerson(p nameenrich.Person) (int, error)
 }
 
+type Receiption interface {
+	ReceiptPerson(int) (nameenrich.Person, error)
+}
+
 type Repository struct {
-	Autorization
+	Insertion
+	Receiption
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Autorization: NewAuthpostgres(db),
+		Insertion:  NewInsertpostgres(db),
+		Receiption: NewReceiptpostgres(db),
 	}
 }

@@ -30,7 +30,7 @@ func (h *Handler) takePerson(c *gin.Context) {
 		return
 	}
 
-	id, err := h.service.Authsevice.CreatePerson(p)
+	id, err := h.service.InsertService.CreatePerson(p)
 
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, err.Error())
