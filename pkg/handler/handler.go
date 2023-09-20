@@ -21,7 +21,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	getPerson := router.Group("/")
 	{
-		getPerson.POST("/", h.checkPerson)
+		getPerson.POST("/", h.takePerson)
 	}
 
 	return router
