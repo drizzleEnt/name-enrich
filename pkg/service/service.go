@@ -5,6 +5,8 @@ import (
 	"name-enrich/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Enrich interface {
 	EnrichAge(p *nameenrich.Person) error
 	EnrichGender(p *nameenrich.Person) error

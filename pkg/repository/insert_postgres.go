@@ -22,14 +22,22 @@ func NewInsertpostgres(db *sqlx.DB) *Insertpostgres {
 }
 
 func (a *Insertpostgres) CreatePerson(p nameenrich.Person) (int, error) {
-	var id int
 
-	quary := fmt.Sprintf("INSERT INTO %s (name, surname, patronymic, age, gender, nationality) values ($1, $2, $3, $4, $5, $6) RETURNING id", personTable)
-	row := a.db.QueryRow(quary, p.Name, p.Surname, p.Patronymic, p.Age, p.Gender, p.Nationality)
+	tx, err := a.db.Begin()
 
-	if err := row.Scan(&id); err != nil {
+	if err != nil {
 		return 0, err
 	}
 
-	return id, nil
+	var id int
+
+	createItemQuary := fmt.Sprintf("INSERT INTO %s (name, surname, patronymic, age, gender, nationality) values ($1, $2, $3, $4, $5, $6) RETURNING id", personTable)
+	row := tx.QueryRow(createItemQuary, p.Name, p.Surname, p.Patronymic, p.Age, p.Gender, p.Nationality)
+
+	if err := row.Scan(&id); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	return id, tx.Commit()
 }

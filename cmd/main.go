@@ -37,8 +37,6 @@ func main() {
 	service := service.NewService(repo)
 	handlers := handler.NewHandler(service)
 
-	//http.HandleFunc("/", personEncode)
-
 	srv := new(nameenrich.Server)
 
 	if err := srv.Run(os.Getenv("PORT"), handlers.InitRoutes()); err != nil {
